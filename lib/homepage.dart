@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:learn_bloc/cubit/AdderPart.dart';
 import 'package:learn_bloc/cubit/CounterCubit.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -12,12 +13,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final counter = CounterCubit().state;
-  final counterCubit = CounterCubit();
-
   @override
   Widget build(BuildContext context) {
-    print("I am re run again");
+    final counterCubit = BlocProvider.of<CounterCubit>(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -32,29 +30,22 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             BlocBuilder(
                 bloc: counterCubit,
-                builder: (context, counter) {
+                builder: (context, UpdatedValue) {
                   return Text(
-                    '$counter',
+                    '$UpdatedValue',
                     style: Theme.of(context).textTheme.headlineMedium,
                   );
                 }),
           ],
         ),
       ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          FloatingActionButton(
-            onPressed: () => counterCubit.incrementCounter(),
-            tooltip: 'Increment',
-            child: const Icon(Icons.add),
-          ),
-          FloatingActionButton(
-            onPressed: () => counterCubit.decrement(),
-            tooltip: 'Decrement',
-            child: const Icon(Icons.remove),
-          ),
-        ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const IncLogic()));
+        },
+        tooltip: 'Next',
+        child: const Icon(Icons.skip_next_sharp),
       ),
     );
   }
