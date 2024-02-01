@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:learn_bloc/cubit/CounterCubit.dart';
+import 'package:learn_bloc/bloc/counter_bloc.dart';
 
 class IncLogic extends StatelessWidget {
   const IncLogic({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final counterCubit = BlocProvider.of<CounterCubit>(context);
+    // final counterCubit = BlocProvider.of<CounterCubit>(context);
+    final counterBloc = BlocProvider.of<CounterBloc>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -19,13 +20,14 @@ class IncLogic extends StatelessWidget {
           children: [
             ElevatedButton(
               onPressed: () {
-                counterCubit.increment();
+                counterBloc.add(CounterIncrementedEvent());
+                // counterCubit.increment();
               },
               child: const Text("Increment"),
             ),
             ElevatedButton(
               onPressed: () {
-                counterCubit.decrement();
+                counterBloc.add(CounterDecrementEvent());
               },
               child: const Text("Decrement"),
             ),
