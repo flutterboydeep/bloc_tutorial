@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:learn_bloc/bloc/counter_bloc.dart';
-import 'package:learn_bloc/cubit/CounterCubit.dart';
+
+import 'package:learn_bloc/cubit/addTitle_cubit.dart';
 import 'package:learn_bloc/homepage.dart';
 
 void main() {
@@ -15,8 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => CounterCubit()),
-        BlocProvider(create: (_) => CounterBloc()),
+        BlocProvider(create: (_) => AddTitle_cubit()),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -25,7 +24,7 @@ class MyApp extends StatelessWidget {
               seedColor: const Color.fromARGB(255, 97, 6, 255)),
           useMaterial3: true,
         ),
-        home: const MyHomePage(title: 'Flutter Demo Home Page'),
+        home: MyHomePage(title: 'Flutter Demo Home Page'),
       ),
     );
   }
