@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:learn_bloc/bloc/auth_bloc.dart';
 
-import 'package:learn_bloc/cubit/addTitle_cubit.dart';
 import 'package:learn_bloc/homepage.dart';
 
 void main() {
@@ -13,10 +13,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => AddTitle_cubit()),
-      ],
+    return BlocProvider(
+      create: (context) => AuthBloc(),
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
