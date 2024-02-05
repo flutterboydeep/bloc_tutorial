@@ -33,20 +33,23 @@ class EnterNewPage extends StatelessWidget {
           if (state is AuthFailure) {
             return Center(child: Text("some Error Occured"));
           }
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text((state as AuthSuccess).uid),
-                ElevatedButton(
-                    onPressed: () {
-                      BlocProvider.of<AuthBloc>(context).add(
-                          AuthSignOutRequest()); // to add and event, what event will be occured after onPress
-                    },
-                    child: Text("Log Out")),
-              ],
-            ),
-          );
+          if (state is AuthSucess) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(state.userOutput),
+                  ElevatedButton(
+                      onPressed: () {
+                        BlocProvider.of<AuthBloc>(context).add(
+                            AuthLogOutRequest()); // to add and event, what event will be occured after onPress
+                      },
+                      child: Text("Log Out")),
+                ],
+              ),
+            );
+          }
+          return Center(child: Text("By User 🙋‍♂️"));
         },
       ),
     );

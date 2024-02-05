@@ -7,11 +7,11 @@ class AuthInitial extends AuthState {}
 class AuthLoading extends AuthState {}
 
 class AuthFailure extends AuthState {
-  final error;
-  AuthFailure(this.error);
+  final String Error;
+  AuthFailure(this.Error);
 }
 
-class AuthSuccess extends AuthState {
-  final String uid;
-  AuthSuccess({required this.uid});
+class AuthSucess extends AuthState {
+  final String userOutput;
+  AuthSucess({required this.userOutput});
 }

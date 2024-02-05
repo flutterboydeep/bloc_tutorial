@@ -6,47 +6,44 @@ part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(AuthInitial()) {
-    on<AuthSignInRequest>(_onAuthSingInRequest);
-    on<AuthSignOutRequest>(_onAuthSignOUtRequest);
+    on<AuthLoginRequest>(_onAuthLogInRequest);
+    on<AuthLogOutRequest>(_onAuthLogOutRequest);
   }
 
-  @override
-  void onChange(Change<AuthState> change) {
-    super.onChange(change);
-    log("AuthBloc - $change");
-  }
 
-  @override
-  void onTransition(Transition<AuthEvent, AuthState> transition) {
-    super.onTransition(transition);
-    print("OnTransition= $transition");
-  }
+  void _onAuthLogInRequest
+    (event, emit) async {
+      final mail = event.Email;
+      final password = event.Password;
+      emit(AuthLoading());
 
-  void _onAuthSingInRequest(event, emit) async {
-    emit(AuthLoading());
-    try {
-      final email = event.Email;
-      final passsword = event.Password;
-
-      await Future.delayed(Duration(seconds: 1), () {
-        return emit(AuthSuccess(uid: '$email-$passsword'));
-      });
-
-      if (passsword.length < 6) {
-        return emit(AuthFailure("Password cannot be less than 6 charactes"));
+      try {
+        if (password.length < 6) {
+          return emit(AuthFailure("Password can not be less then 6 character"));
+        }
+        if (mail.isEmpty) {
+          return emit(AuthFailure("E-mail can not be empty"));
+        }
+        await Future.delayed(Duration(seconds: 2), () {
+          return emit(AuthSucess(userOutput: "$mail-$password"));
+        });
+      } catch (e) {
+        return emit(AuthFailure("Error: $e"));
       }
-    } catch (e) {
-      emit(AuthFailure("Error ocured: $e"));
     }
-  }
 
-  void _onAuthSignOUtRequest(event, emit) async {
-    try {
-      await Future.delayed(Duration(seconds: 1), () {
-        return emit(AuthInitial());
-      });
-    } catch (e) {
-      emit(AuthFailure(e.toString()));
+
+    
+    void _onAuthLogOutRequest(event, state) async {
+      emit(AuthLoading());
+      try {
+        await Future.delayed(Duration(seconds: 3), () {
+          return emit(AuthInitial());
+        });
+      } catch (e) {
+        return emit(AuthFailure("Error : $e"));
+      }
     }
   }
+  
 }

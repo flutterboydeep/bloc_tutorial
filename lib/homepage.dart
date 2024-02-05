@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:learn_bloc/bloc/auth_bloc.dart';
+
 import 'package:learn_bloc/enterNewpage.dart';
 
 class MyHomePage extends StatelessWidget {
@@ -25,19 +26,18 @@ class MyHomePage extends StatelessWidget {
         listener: (context, state) {
           if (state is AuthFailure) {
             ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.error)));
+                .showSnackBar(SnackBar(content: Text(state.Error)));
           }
-          if (state is AuthSuccess) {
+          if (state is AuthSucess) {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => EnterNewPage()));
           }
         },
         builder: (context, state) {
           if (state is AuthLoading) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
+            return Center(child: CircularProgressIndicator());
           }
+
           return Center(
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -79,13 +79,13 @@ class MyHomePage extends StatelessWidget {
                                 RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(5)))),
                         onPressed: () {
-                          context.read<AuthBloc>().add(AuthSignInRequest(
-                              Email: mailCtrl.text.trim(),
-                              Password: passCtrl.text.trim()));
-                          // BlocProvider.of<AuthBloc>(context).add(
-                          //     AuthSignInRequest(
-                          // Email: mailCtrl.text.trim(),
-                          // Password: passCtrl.text.trim()));
+                          BlocProvider.of<AuthBloc>(context).add(
+                              AuthLoginRequest(
+                                  Email: mailCtrl.text.trim(),
+                                  Password: passCtrl.text.trim()));
+                          // context.read<AuthBloc>().add(AuthLoginRequest(
+                          //     Email: mailCtrl.text.trim(),
+                          //     Password: passCtrl.text.trim()));
                         },
                         child: Text("Add")),
                   ),
