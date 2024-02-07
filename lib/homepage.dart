@@ -2,10 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:learn_bloc/bloc/auth_bloc.dart';
+import 'package:learn_bloc/bloc/api_bloc.dart';
 
 import 'package:learn_bloc/enterNewpage.dart';
 
+// ignore: must_be_immutable
 class MyHomePage extends StatelessWidget {
   MyHomePage({super.key, required this.title});
 
@@ -22,86 +23,15 @@ class MyHomePage extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(title),
       ),
-      body: BlocConsumer<AuthBloc, AuthState>(
-        listener: (context, state) {
-          if (state is AuthFailure) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.Error)));
-          }
-          if (state is AuthSucess) {
+      body: Center(
+        child: ElevatedButton(
+          child: Text("Fatch Data"),
+          onPressed: () {
+            BlocProvider.of<ApiBloc>(context).add(FatchDataEvent());
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => EnterNewPage()));
-          }
-        },
-        builder: (context, state) {
-          if (state is AuthLoading) {
-            return Center(child: CircularProgressIndicator());
-          }
-
-          return Center(
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Email',
-                      enabledBorder: OutlineInputBorder(),
-                      focusedBorder:
-                          OutlineInputBorder(borderSide: BorderSide(width: 2)),
-                    ),
-                    controller: mailCtrl,
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  TextField(
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      hintText: 'Password',
-                      enabledBorder: OutlineInputBorder(),
-                      focusedBorder:
-                          OutlineInputBorder(borderSide: BorderSide(width: 2)),
-                    ),
-                    controller: passCtrl,
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                        style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(
-                                const Color.fromARGB(255, 192, 170, 229)),
-                            shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5)))),
-                        onPressed: () {
-                          BlocProvider.of<AuthBloc>(context).add(
-                              AuthLoginRequest(
-                                  Email: mailCtrl.text.trim(),
-                                  Password: passCtrl.text.trim()));
-                          // context.read<AuthBloc>().add(AuthLoginRequest(
-                          //     Email: mailCtrl.text.trim(),
-                          //     Password: passCtrl.text.trim()));
-                        },
-                        child: Text("Add")),
-                  ),
-                  ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => EnterNewPage()));
-                      },
-                      child: Text("next"))
-                ],
-              ),
-            ),
-          );
-        },
+          },
+        ),
       ),
     );
   }

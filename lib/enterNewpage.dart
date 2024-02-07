@@ -1,55 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:learn_bloc/bloc/auth_bloc.dart';
-import 'package:learn_bloc/homepage.dart';
+import 'package:learn_bloc/bloc/api_bloc.dart';
+import 'package:learn_bloc/models/productModel.dart';
 
 class EnterNewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    //  final authState = context.watch<AuthBloc>().state as AuthSuccess;
+    //  final ApiState = context.watch<ApiBloc>().state as AuthSuccess;
     return Scaffold(
       appBar: AppBar(
         title: Text("Hi I am new page"),
       ),
-      body: BlocConsumer<AuthBloc, AuthState>(
-        listener: ((context, state) {
-          if (state is AuthInitial) {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MyHomePage(
-                    title: "appBar",
-                  ),
-                ),
-                (route) => false);
-          }
-        }),
+      body: BlocBuilder<ApiBloc, ApiState>(
         builder: (context, state) {
-          if (state is AuthLoading) {
+          if (state is ApiLoadingState) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (state is ApiFailureState) {
             return Center(
-              child: CircularProgressIndicator(),
+              child: Text("some error occured"),
             );
           }
-          if (state is AuthFailure) {
-            return Center(child: Text("some Error Occured"));
-          }
-          if (state is AuthSucess) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(state.userOutput),
-                  ElevatedButton(
-                      onPressed: () {
-                        BlocProvider.of<AuthBloc>(context).add(
-                            AuthLogOutRequest()); // to add and event, what event will be occured after onPress
-                      },
-                      child: Text("Log Out")),
-                ],
-              ),
+          if (state is ApiLoadedState) {
+            return ListView.builder(
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 10),
+                  child: ListTile(
+                    leading: SizedBox(
+                        height: 100,
+                        width: 100,
+                        child: Image.network(
+                            state.productModel[index].image.toString())),
+                    title: Text(state.productModel[index].category.toString()),
+                    trailing: Text(
+                        state.productModel[index].rating!.count.toString() +
+                            "👍"),
+                  ),
+                );
+              },
+              itemCount: state.productModel.length,
             );
           }
-          return Center(child: Text("By User 🙋‍♂️"));
+          return Center(child: Text("Some Error Occured"));
         },
       ),
     );

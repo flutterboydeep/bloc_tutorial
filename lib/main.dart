@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:learn_bloc/bloc/auth_bloc.dart';
+import 'package:learn_bloc/bloc/api_bloc.dart';
 
 import 'package:learn_bloc/homepage.dart';
 
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AuthBloc(),
+      create: (context) => ApiBloc(),
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
