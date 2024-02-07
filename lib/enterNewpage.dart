@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:learn_bloc/bloc/api_bloc.dart';
-import 'package:learn_bloc/models/productModel.dart';
 
 class EnterNewPage extends StatelessWidget {
   @override
@@ -18,7 +17,7 @@ class EnterNewPage extends StatelessWidget {
           }
           if (state is ApiFailureState) {
             return Center(
-              child: Text("some error occured"),
+              child: Text("Api request Failed"),
             );
           }
           if (state is ApiLoadedState) {
@@ -42,7 +41,7 @@ class EnterNewPage extends StatelessWidget {
               itemCount: state.productModel.length,
             );
           }
-          return Center(child: Text("Some Error Occured"));
+          return Center(child: Text('Some Error Occured'));
         },
       ),
     );
