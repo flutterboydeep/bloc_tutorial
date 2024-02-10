@@ -5,7 +5,6 @@ import 'package:learn_bloc/bloc/api_bloc.dart';
 class EnterNewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    //  final ApiState = context.watch<ApiBloc>().state as AuthSuccess;
     return Scaffold(
       appBar: AppBar(
         title: Text("Hi I am new page"),
@@ -21,6 +20,7 @@ class EnterNewPage extends StatelessWidget {
             );
           }
           if (state is ApiLoadedState) {
+            // return Center(child: Text('ApiLoadedState'));
             return ListView.builder(
               itemBuilder: (context, index) {
                 return Padding(

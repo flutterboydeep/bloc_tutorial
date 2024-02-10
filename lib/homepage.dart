@@ -27,6 +27,8 @@ class MyHomePage extends StatelessWidget {
         child: ElevatedButton(
           child: Text("Fatch Data"),
           onPressed: () {
+            // Navigator.push(context,
+            //     MaterialPageRoute(builder: (context) => EnterNewPage()));
             BlocProvider.of<ApiBloc>(context).add(FatchDataEvent());
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => EnterNewPage()));
