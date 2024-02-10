@@ -5,9 +5,7 @@ import 'package:learn_bloc/models/productModel.dart';
 
 class ProductRepo {
   final ApiDataProvider apiDataProvider;
-  ProductRepo(
-    this.apiDataProvider,
-  );
+  ProductRepo(this.apiDataProvider);
 
   Future<List<ProductModel>> getData() async {
     try {

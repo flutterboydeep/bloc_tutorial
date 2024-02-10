@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'package:equatable/equatable.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:learn_bloc/models/productModel.dart';
@@ -12,7 +12,8 @@ class ApiBloc extends Bloc<ApiEvent, ApiState> {
   final ProductRepo productRepo;
   ApiBloc(this.productRepo) : super(ApiInitialState()) {
     on<FatchDataEvent>((event, emit) async {
-      emit(ApiLoadingState());
+      emit(ApiInitialState());
+
       try {
         final productt = await productRepo.getData();
 
