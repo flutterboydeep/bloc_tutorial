@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:learn_bloc/bloc/widget_bloc.dart';
+import 'package:learn_bloc/Data/image_repo.dart';
+import 'package:learn_bloc/bloc/image_bloc.dart';
 
-import 'package:learn_bloc/homepage.dart';
+import 'package:learn_bloc/Screen/homepage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => WidgetBloc(),
+      create: (context) => ImageBloc(ImagePickerRepo()),
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
