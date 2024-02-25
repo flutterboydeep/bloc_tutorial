@@ -1,175 +1,129 @@
-import 'dart:developer';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:learn_bloc/bloc/todoListEvent.dart';
-import 'package:learn_bloc/bloc/todoList_bloc.dart';
-import 'package:learn_bloc/bloc/todoList_state.dart';
+import 'package:learn_bloc/Screen/favirotePage.dart';
+import 'package:learn_bloc/bloc/fav_bloc.dart';
+import 'package:learn_bloc/r_model/favModel.dart';
 
-// ignore: must_be_immutable
-class MyHomePage extends StatefulWidget {
-  final String title;
-  MyHomePage({super.key, required this.title});
+class Homepage extends StatefulWidget {
+  const Homepage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<Homepage> createState() => _HomepageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  TextEditingController titleController = TextEditingController();
-  TextEditingController UpdatetitleController = TextEditingController();
-  DateTime now = DateTime.now();
+class _HomepageState extends State<Homepage> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<FavBloc>().add(FetchFavourite());
+  }
+
+  checkbox(state, item) {
+    return Checkbox(
+      value: state.showdeleteCheckBox.contains(item) ? true : false,
+      onChanged: (newValue) {
+        if (newValue == true) {
+          context.read<FavBloc>().add(SelcteCheckboxItemEvent(fmodel: item));
+        } else {
+          context.read<FavBloc>().add(UnselcteCheckboxItemEvent(fmodel: item));
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    log("I am re run again");
-    var ind;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: BlocBuilder<TodoListBloc, TodoListState>(
-          //     buildWhen: (previous, currrent) {
-          //   return previous.Addtitle != currrent.Addtitle;
-          // },
-          builder: (context, state) {
-        return ListView.builder(
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsets.only(bottom: 25),
-                child: Card(
-                  color: Color.fromARGB(255, 31, 32, 33),
-                  elevation: 7,
-                  child: ListTile(
-                    tileColor: Color.fromARGB(255, 240, 235, 155),
-                    leading: Text("$index"),
-                    title: Text(state.Addtitle[index]),
-                    subtitle: Text(
-                        "${now.day}/${now.month}/${now.year}  ${now.hour}:${now.minute}:${now.second}"),
-                    trailing: threeDot(index, state.Addtitle[index]),
-                  ),
-                ),
-              );
+        title: Text("Favirote Item"),
+        actions: [
+          BlocBuilder<FavBloc, FavInitial>(
+            builder: (context, state) {
+              return state.showdeleteCheckBox.isNotEmpty
+                  ? IconButton(
+                      onPressed: () {
+                        context.read<FavBloc>().add(DeleteItemEvent());
+                      },
+                      icon: Icon(Icons.delete),
+                    )
+                  : TextButton(
+                      onPressed: () {
+                        context.read<FavBloc>().add(IsCheckboxEvent());
+                      },
+                      child: Text("Edit"),
+                    );
             },
-            itemCount: state.Addtitle.length);
-      }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialogBox();
-        },
-        child: Icon(Icons.add),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => FavirotePage()));
+            },
+            icon: Icon(Icons.favorite),
+          ),
+        ],
       ),
-    );
-  }
-
-  void showDialogBox() async {
-    await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Enter Some Title"),
-            content: TextField(
-              controller: titleController,
-              maxLength: 50,
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text("Cancel"),
+      body: BlocBuilder<FavBloc, FavInitial>(builder: (context, state) {
+        switch (state.listStatus) {
+          case ListStatus.loading:
+            return Center(
+              child: CircularProgressIndicator(
+                color: Colors.black,
               ),
-              TextButton(
-                onPressed: () {
-                  BlocProvider.of<TodoListBloc>(context).add(AddTitleEvent(
-                      title: titleController.text.trim().toString()));
-                  // context.read<TodoListBloc>().add(AddTitleEvent(
-                  //     title: titleController.text.trim().toString()));
-                  titleController.clear();
-                  Navigator.of(context).pop();
-                },
-                child: Text("Okk"),
-              )
-            ],
-          );
-        });
-  }
+            );
 
-  threeDot<Widget>(int ListTileIndex, String title) {
-    return PopupMenuButton(
-      itemBuilder: (context) {
-        return [
-          PopupMenuItem(
-            value: 0,
-            child: Text("Edit"),
-          ),
-          PopupMenuItem(
-            value: 1,
-            child: Text("Delete"),
-          ),
-        ];
-      },
-      onSelected: (ItemSelected) {
-        selectedThreeDotItem(context, ItemSelected, ListTileIndex, title);
-      },
+          case ListStatus.failure:
+            return Center(
+              child: Text("Some Error Occured"),
+            );
+
+          case ListStatus.Initial:
+            return Center(child: CircularProgressIndicator());
+
+          case ListStatus.success:
+            return ListView.builder(
+              itemCount: state.favItemList.length,
+              itemBuilder: (context, index) {
+                final item = state.favItemList[index];
+
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    child: ListTile(
+                      leading: state.isCheckbox == true
+                          ? checkbox(state, item)
+                          : SizedBox(
+                              height: 0,
+                            ),
+                      title: Text(item.value),
+                      trailing: IconButton(
+                        onPressed: () {
+                          FavModel objFavModel = FavModel(
+                              id: item.id,
+                              value: item.value,
+                              isFavourite:
+                                  item.isFavourite == true ? false : true);
+                          BlocProvider.of<FavBloc>(context)
+                              .add(favIconEvent(item: objFavModel));
+
+                          BlocProvider.of<FavBloc>(context)
+                              .add(nextScreenFavEvent(
+                            isfav: item.isFavourite,
+                            id: item.id,
+                            value: item.value,
+                          ));
+                        },
+                        icon: Icon(state.favItemList[index].isFavourite == true
+                            ? Icons.favorite
+                            : Icons.favorite_border),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+        }
+      }),
     );
-  }
-
-  void selectedThreeDotItem(context, popubItemSelected, ListTileIndex, title) {
-    switch (popubItemSelected) {
-      case 0:
-        upDateDialogBox(ListTileIndex, title);
-
-        break;
-      case 1:
-        BlocProvider.of<TodoListBloc>(context)
-            .add(DeletTitleEvent(DelIndex: ListTileIndex));
-
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("$title Successfully Deleted !")));
-        break;
-    }
-  }
-
-  void upDateDialogBox(int ListTileIndex, String title) async {
-    UpdatetitleController.text = title;
-    await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Update Title"),
-            content: BlocBuilder<TodoListBloc, TodoListState>(
-                builder: (context, state) {
-              return TextField(
-                controller: UpdatetitleController,
-                maxLength: 50,
-              );
-            }),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text("Cancel"),
-              ),
-              TextButton(
-                onPressed: () {
-                  BlocProvider.of<TodoListBloc>(context).add(UpdateTitleEvent(
-                      UpdateTitle: UpdatetitleController.text.trim(),
-                      updateIndex: ListTileIndex));
-                  ;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("$title Successfully Updated !")));
-                  UpdatetitleController.clear();
-
-                  Navigator.of(context).pop();
-                },
-                child: Text("Update"),
-              )
-            ],
-          );
-        });
   }
 }
